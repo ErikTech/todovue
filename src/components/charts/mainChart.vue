@@ -58,6 +58,9 @@ export default {
       mainOptions: {
         chart: {
           pieHole: 0.4,
+          backgroundColor: '#424242',
+          color: '#fff'
+
         },
       },
     

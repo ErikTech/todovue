@@ -70,9 +70,11 @@
   text-align: left
   max-width: 1070px
   margin: 0 auto
+  color: #fff
+  
 
-h2
-  color: navy
+// h2
+  // color: navy
 
 h3
   text-decoration underline

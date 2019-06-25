@@ -1,18 +1,43 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">Left To Do</router-link> | 
-      <router-link to="/settings">Settings</router-link> | 
-      <router-link to="/login">Login</router-link> | 
-      <router-link to="/sign-up">Sign Up</router-link>
-
-
-
-    </div>
+<div class="pageContainer">
+  <!-- <md-app > -->
+    <div id="app">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,500,700,400italic|Material+Icons">
+    <md-tabs id="nav" md-sync-route md-alignment="fixed" class="md-primary">
+      <md-tab md-label="Home" to="/home"></md-tab> 
+      <md-tab md-label="Left To Do" to="/about"></md-tab> 
+      <md-tab md-label="Settings" to="/settings"></md-tab>
+      <md-tab md-label="Login" to="/login"></md-tab> 
+      <md-tab md-label="Sign Up" to="/sign-up"></md-tab>
+    </md-tabs>
     <router-view />
+    <md-app>
+    </md-app>
+    </div>
+  <!-- </md-app> -->
   </div>
 </template>
+<script>
+import Vue from 'vue'
+// import { MdApp } from 'vue-material/dist/components/MdApp/index.js'
+
+// Vue.use(MdApp)
+
+
+export default {
+  name: 'App',
+  components: {
+    // MdApp
+  }
+  // data() {
+  //   return {
+  //     email: '',
+  //     password: ''
+  //   }
+  // },
+}
+</script>
+
 <style lang="stylus">
 #app
   font-family 'Avenir', Helvetica, Arial, sans-serif
@@ -21,11 +46,7 @@
   text-align center
   color #2c3e50
 
-#nav
-  padding 30px
-  a
-    font-weight bold
-    color #2c3e50
-    &.router-link-exact-active
-      color #42b983
+
+
 </style>
+  

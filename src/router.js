@@ -1,10 +1,12 @@
 import Vue from "vue";
 import firebase from 'firebase';
 import Router from "vue-router";
-import Home from "./views/Home.vue";
+import Home from "@/views/Home.vue";
 
-import Login from "./views/Login.vue";
-import SignUp from "./views/SignUp.vue";
+import Login from "@/views/Login.vue";
+import SignUp from "@/views/SignUp.vue";
+import About from "@/views/About.vue";
+
 
 Vue.use(Router);
 
@@ -12,10 +14,10 @@ const router = new Router({
   mode: "history",
   base: process.env.BASE_URL,
   routes: [
-    {
-      path: '*',
-      redirect: '/login'
-    },
+    // {
+    //   path: '*',
+    //   redirect: '/login'
+    // },
     {
       path: '/',
       redirect: '/login'
@@ -24,6 +26,11 @@ const router = new Router({
       path: '/login',
       name: 'Login',
       component: Login
+    },
+    {
+      path: '/about',
+      name: 'about',
+      component: About
     },
     {
       path: '/sign-up',

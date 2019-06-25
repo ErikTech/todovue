@@ -1,24 +1,35 @@
 <template>
     <div id="addTaskModal" v-if="addTaskModalVisible">
-      <div><input type="text" v-model="newTask" placeholder="My New Task" /></div>
-      <div><input type="number" v-model="newTaskPoints" placeholder="3"/> Points </div>
-      <select v-model="newTaskCategory">
-        <option value="Work" selected>Work</option>
-        <option value="Home">Home</option>
-        <option value="Fitness">Fitness</option>
-        <option value="Finance">Finance</option>
-        <option value="Family">Family</option>
-        <option value="Code">Code</option>
-      </select>
-      <div><input type="radio" v-model="pickedTime" value="Today"/> Today</div>
-      <div><input type="radio" v-model="pickedTime" value="This Week" /> This Week (sun-sat)</div>
-      <div><input type="radio" v-model="pickedTime" value="Dailies"/> Daily</div>
-      <div><input type="radio" v-model="pickedTime" value="Weeklies"/> Weekly</div>
-
-
-
-      <button @click="confirmTask">Add +</button>
-      <button @click="cancel">Cancel</button>
+      <div>
+        <md-field>
+          <label>Task</label>
+          <md-input v-model="newTask" placeholder="My New Task"></md-input>
+        </md-field>
+        <!-- <input type="text"   /> -->
+      </div>
+      <div>
+        <md-field>
+          <label>Points</label>
+          <md-input v-model="newTaskPoints" placeholder="3" type="number"></md-input>
+        </md-field>
+        <!-- <input type="number" v-model="newTaskPoints" placeholder="3"/> Points -->
+      </div>
+      <md-field>
+        <md-select v-model="newTaskCategory">
+          <md-option value="Work" selected>Work</md-option>
+          <md-option value="Home">Home</md-option>
+          <md-option value="Fitness">Fitness</md-option>
+          <md-option value="Finance">Finance</md-option>
+          <md-option value="Family">Family</md-option>
+          <md-option value="Code">Code</md-option>
+        </md-select>
+      </md-field>
+      <div><md-radio type="radio" v-model="pickedTime" value="Today"> Today</md-radio></div>
+      <div><md-radio type="radio" v-model="pickedTime" value="This Week" > This Week (sun-sat)</md-radio></div>
+      <div><md-radio type="radio" v-model="pickedTime" value="Dailies"> Daily</md-radio></div>
+      <div><md-radio type="radio" v-model="pickedTime" value="Weeklies"> Weekly</md-radio></div>
+      <md-button class="md-primary md-raised" @click="confirmTask">Add +</md-button>
+      <md-button class="md-accent md-raised" @click="cancel">Cancel</md-button>
       </div>
 </template>
 

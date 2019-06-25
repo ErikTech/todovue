@@ -1,6 +1,8 @@
 <template>
 <div>
-    <div> {{chartData.category}} - {{chartData.completedPercentage}}%</div>
+   <md-toolbar :md-elevation="1">
+        <span class="md-title">{{chartData.category}} - {{chartData.completedPercentage}}%</span>
+      </md-toolbar>
      <GChart
     :settings="{packages: ['corechart']}"    
     :data="filteredData"
@@ -43,6 +45,8 @@ export default {
           // subtitle: 'Sales, Expenses, and Profit: 2014-2017',
           pieHole: 0.8,
           legend: 'none',
+          backgroundColor: '#424242',
+
 
         },
       },

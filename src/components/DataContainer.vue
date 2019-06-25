@@ -5,12 +5,12 @@
     :chartData="taskCategoryData"
   />
   </div>
-    <ul class="category-data-component">
-          <li  v-for="(category, index) in taskCategoryData" :key="index" @click="showCategoryTask(category.category)" v-if="category.category != 'All'" :class="{'active' : category.category == selectedCategory}">
+    <div class="category-data-component viewport">
+          <md-list  v-for="(category, index) in taskCategoryData" :key="index" @click="showCategoryTask(category.category)" v-if="category.category != 'All'" :class="{'active' : category.category == selectedCategory}">
         <CategoryChart  
     :chartData="category"
-  /></li>
-    </ul>
+  /></md-list>
+    </div>
   </div>
 </template>
 

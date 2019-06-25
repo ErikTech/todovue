@@ -1,19 +1,31 @@
 <template>
-  <div class="home">
-  <button @click="logout">Logout</button>
+  <div class="md-layout">
+  <div class="md-layout-item md-size-30 right-sidebar">
+        <ListContainer :arrayList="getList(listCategories, timeChosen)" :category="taskCategoryData"/>
+
+  </div>
+  <div class="md-layout-item md-size-70 main-content">
+  <md-button class="md-primary md-raised" @click="logout">Logout</md-button>
   <article v-for="(location, idx) in locations" :key="idx">
     <!-- <img :src="location.image"> -->
-    <h1>Welcome {{location.email}}</h1>
-    {{location}}
+    <h1 class="md-display-1">Welcome {{location.email}}</h1>
+    <!-- <span class="md-headline">{{location}}</span> -->
   </article>
     <!-- <img alt="Vue logo" src="../assets/logo.png"> -->
     <!-- <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/> -->
     <!-- <div v-for="(category, index) in taskCategoryData" :key="index" >{{category.category}} : {{category.completedPercentage}}%</div> -->
     <DataContainer v-on:showCategoryTasks="showTaskList" :categoryData="taskCategoryData"/>
     <TimeTabs v-on:showSelectedTime="showTimeList" />
-    <ListContainer :arrayList="getList(listCategories, timeChosen)"/>
+     <md-drawer :md-active.sync="showNavigation" md-swipeable>
+
+
+    <!-- <ListContainer :arrayList="getList(listCategories, timeChosen)" :category="taskCategoryData"/> -->
+TEST
+    </md-drawer>
+
 
   </div>
+</div>
 </template>
 
 <script>
@@ -24,9 +36,7 @@ import TimeTabs from '@/components/TimeTabs.vue';
 import DataContainer from '@/components/DataContainer.vue';
 import { db } from '../main'
 
-
 // import HelloWorld from "@/components/HelloWorld.vue";
-
 
 export default {
   name: "home",
@@ -48,7 +58,7 @@ export default {
       }
   }, 
   mounted(){
-    console.log(db.collection('users').orderBy('name'))
+    // console.log(db.collection('users').orderBy('name'))
     this.getAllData()
     this.$store.watch(
       (state, getters) => getters.todos,
@@ -64,6 +74,7 @@ export default {
     return {
       locations: [],
       listCategories: "All",
+      showNavigation: false,
       // taskCategoryData: [],
       timeChosen: 'today',
       categories: [
@@ -97,10 +108,11 @@ export default {
         // console.log(element)
       });
       this.$store.dispatch('saveCategoryData', allCategoryData);
-      console.log(allCategoryData)
+      // console.log(allCategoryData)
     },
     showTaskList(category){
       this.listCategories = category;
+      this.showNavigation = true;
       // console.log(category)
     },
     showTimeList(timeChosen){
@@ -144,7 +156,7 @@ export default {
       return categoryObject
     },
     getList(categoryToShow, timeList){
-      console.log(this.timeChosen)
+      // console.log(this.timeChosen)
       if(categoryToShow=="All"){
         if(timeList=='All'){
           return this.todos
@@ -168,3 +180,11 @@ export default {
   }
 };
 </script>
+<style lang="stylus" scoped>
+.right-sidebar
+  max-width: 200px
+.main-content
+  max-width: 1070px
+  margin: 0 auto
+  // display: flex
+</style>

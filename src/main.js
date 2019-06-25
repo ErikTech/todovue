@@ -8,6 +8,13 @@ import router from "./router";
 import store from "./store";
 import "./registerServiceWorker";
 
+import VueMaterial from 'vue-material'
+import 'vue-material/dist/vue-material.min.css'
+import 'vue-material/dist/theme/default.css'
+import 'vue-material/dist/theme/default-dark.css' // This line here
+
+
+
 Vue.config.productionTip = false;
 
 let app = '';
@@ -22,6 +29,7 @@ const config = {
 };
 
 Vue.use(firestorePlugin)
+Vue.use(VueMaterial)
 
 firebase.initializeApp(config);
 
@@ -31,6 +39,7 @@ firebase.auth().onAuthStateChanged(() => {
     app = new Vue({
       router,
       store,
+      el: '#app',
       render: h => h(App)
     }).$mount('#app');
   }
