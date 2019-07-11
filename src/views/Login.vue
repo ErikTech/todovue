@@ -4,7 +4,7 @@
     <input type="text" v-model="email" placeholder="Email"><br>
     <input type="password" v-model="password" placeholder="Password"><br>
     <md-button class="md-primary md-raised" @click="login">Connect</md-button>
-    <md-button class="md-primary md-raised" @click="iterate">ITERATOR TEST</md-button>
+    <!-- <md-button class="md-primary md-raised" @click="iterate">ITERATOR TEST</md-button> -->
 
     <p>You don't have an account ? You can <router-link to="/sign-up">create one</router-link></p>
   </div>
@@ -18,14 +18,37 @@
     data() {
       return {
         email: '',
-        password: ''
+        password: '',
+        data: []
       }
     },
+    // firebase: {
+    //   todos: tasks
+    // },
     methods: {
       login: function() {
         firebase.auth().signInWithEmailAndPassword(this.email, this.password).then(
           (user) => {
-            this.$router.replace('home')
+            const userUid = user.user.uid; // The UID of the user.
+            // console.log(firebase.auth().currentUser)
+          // console.log(userUid)
+              firebase.firestore().collection('users').doc(userUid).collection('tasks').get().then(collections => {
+          collections.forEach(collection => {
+                // console.log(collection.data());
+                this.data.push(collection.data())  
+                this.$store.dispatch('getTodoList', this.data);
+                this.$store.dispatch('setUserId', userUid)
+
+            })
+        }).catch(console.log);
+            // console.log(this.get('tasks'))
+
+
+            this.$store.dispatch('setUser', this.email);
+            this.$router.replace('home');
+            // this.$store.dispatch('setUser', this.email);
+
+
           },
           (err) => {
             alert('Oops. ' + err.message)
@@ -34,11 +57,6 @@
       },
       iterate: function() {
         console.log("run iterator")
-        // var iterator = [1,2,3].iterator();
-        // console.log(iterator.next());
-        // console.log(iterator.next());
-        // console.log(iterator.next());
-        // console.log(iterator.next());
       }
     }
   }

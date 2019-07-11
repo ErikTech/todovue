@@ -1,7 +1,10 @@
 import Vue from "vue";
-import {firestorePlugin} from 'vuefire'
+// import { firebaseMutations } from 'vuexfirestore'
 import firebase from 'firebase/app'
 import 'firebase/firestore'
+// import VueRx from 'vue-rx'
+// import { firebaseAction } from 'vuexfirestore'
+
 
 import App from "./App.vue";
 import router from "./router";
@@ -12,7 +15,6 @@ import VueMaterial from 'vue-material'
 import 'vue-material/dist/vue-material.min.css'
 import 'vue-material/dist/theme/default.css'
 import 'vue-material/dist/theme/default-dark.css' // This line here
-
 
 
 Vue.config.productionTip = false;
@@ -28,18 +30,47 @@ const config = {
     appId: "1:519618438830:web:f78a1d92b6dfd04a"
 };
 
-Vue.use(firestorePlugin)
+// Vue.use(firebaseMutations)
 Vue.use(VueMaterial)
+
+// Vue.use(VueRx)
 
 firebase.initializeApp(config);
 
-firebase.auth().onAuthStateChanged(() => {
+firebase.auth().onAuthStateChanged((user) => {
   if (!app) {
     /* eslint-disable no-new */
+    
     app = new Vue({
       router,
       store,
       el: '#app',
+      // subscriptions: {
+      //   msg: messageObservable
+      // },
+      created(){
+        if(user){
+          // console.log(user)
+          const userUid = user.uid; // The UID of the user.
+          // console.log(firebase.auth().currentUser)
+        // console.log(userUid)
+            firebase.firestore().collection('users').doc(userUid).collection('tasks').get().then(collections => {
+                            let data = []
+
+        collections.forEach(collection => {
+              // console.log(collection.data());
+              data.push(collection.data())  
+              this.$store.dispatch('getTodoList', data);
+              this.$store.dispatch('setUserId', userUid)
+
+          })
+      }) 
+        }
+        else{
+          this.$router.replace('login');
+
+        }
+      },
       render: h => h(App)
     }).$mount('#app');
   }

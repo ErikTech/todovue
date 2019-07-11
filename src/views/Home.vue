@@ -1,27 +1,23 @@
 <template>
   <div class="md-layout">
   <div class="md-layout-item md-size-30 right-sidebar">
-        <ListContainer :arrayList="getList(listCategories, timeChosen)" :category="taskCategoryData"/>
+        <ListContainer :category="listCategories" :timeChosen="timeChosen"/>
 
   </div>
   <div class="md-layout-item md-size-70 main-content">
   <md-button class="md-primary md-raised" @click="logout">Logout</md-button>
   <article v-for="(location, idx) in locations" :key="idx">
     <!-- <img :src="location.image"> -->
-    <h1 class="md-display-1">Welcome {{location.email}}</h1>
+    <!-- <h1 class="md-display-1">Welcome {{location.email}}</h1> -->
     <!-- <span class="md-headline">{{location}}</span> -->
   </article>
+      <TimeTabs v-on:showSelectedTime="showTimeList" />
+
     <!-- <img alt="Vue logo" src="../assets/logo.png"> -->
     <!-- <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/> -->
     <!-- <div v-for="(category, index) in taskCategoryData" :key="index" >{{category.category}} : {{category.completedPercentage}}%</div> -->
     <DataContainer v-on:showCategoryTasks="showTaskList" :categoryData="taskCategoryData"/>
-    <TimeTabs v-on:showSelectedTime="showTimeList" />
-     <md-drawer :md-active.sync="showNavigation" md-swipeable>
-
-
-    <!-- <ListContainer :arrayList="getList(listCategories, timeChosen)" :category="taskCategoryData"/> -->
-TEST
-    </md-drawer>
+  
 
 
   </div>
@@ -35,6 +31,8 @@ import ListContainer from '@/components/ListContainer.vue';
 import TimeTabs from '@/components/TimeTabs.vue';
 import DataContainer from '@/components/DataContainer.vue';
 import { db } from '../main'
+import { mapGetters, mapState } from 'vuex'
+
 
 // import HelloWorld from "@/components/HelloWorld.vue";
 
@@ -46,21 +44,43 @@ export default {
     DataContainer,
   },
     computed: {
-      todos(){
-        return this.$store.getters.todos
-      },
-      completedTodos(){
-        return this.$store.getters.completedTodos
-      },
-      taskCategoryData(){
-        return this.$store.getters.taskCategoryData
-
-      }
+      ...mapGetters([
+      'todos',
+      'completedTodos',
+      'taskCategoryData',
+      'categories'
+      // ...
+    ]),
+    //  ...mapState([
+    //   'todos',
+    //   // 'completedTodos',
+    //   // 'taskCategoryData',
+    //   // 'categories'
+    //   // ...
+    // ]),
+    //   categories: () => {
+    //     let categoryList = []
+    //     this.todos.forEach(todo => {
+    //       categoryList.push(todo.category)
+    //     // console.log(todo, categoryList)
+    //   });
+    //   console.log("categoryList" + categoryList)
+    //   return categoryList
+    // },
   }, 
   mounted(){
-    // console.log(db.collection('users').orderBy('name'))
+    
+    // console.log(this.$store.getters.todos)
+    this.showTaskList('All')
+    this.showTimeList('All')
+    
+    // console.log("x")
+    // console.log(this.taskCategoryData)
+    // console.log("x")
+
+
     this.getAllData()
-    this.$store.watch(
+     this.$store.watch(
       (state, getters) => getters.todos,
       (newValue, oldValue) => {
         if (newValue !== oldValue) {
@@ -68,6 +88,7 @@ export default {
         }
       },
     );
+    // console.log(this.categories())
    
   },
   data(){
@@ -76,68 +97,73 @@ export default {
       listCategories: "All",
       showNavigation: false,
       // taskCategoryData: [],
-      timeChosen: 'today',
-      categories: [
-        'All',
-        'Work',
-        'Home',
-        'Fitness',
-        'Family',
-        'Finance'
-      ],
+      timeChosen: 'Today',
+      // categories: [
+      //   'All',
+      // ],
       totalPercentage: 0,
 
        
     }
   },
-   firestore () {
-    return {
-      locations: db.collection('users')
-    }
-  },
+  //  firestore () {
+  //   return {
+  //     locations: db.collection('users')
+  //   }
+  // },
   methods: {
+    // taskCategoryData(){
+    //   return this.$store.getters.taskCategoryData;
+    // },
     logout: function() {
       firebase.auth().signOut().then(() => {
         this.$router.replace('login')
       })
     },
     getAllData(){
+      console.log("getting all data")
        let allCategoryData = [];
+      //  console.log(this.categories)
+       allCategoryData.push(this.createCategoryObject('All'));
     this.categories.forEach(element => {
-        allCategoryData.push(this.getCategoryPercentage(element))
+        allCategoryData.push(this.createCategoryObject(element))
         // console.log(element)
       });
+      // console.log("ALL CAT DATA" + allCategoryData)
+
       this.$store.dispatch('saveCategoryData', allCategoryData);
-      // console.log(allCategoryData)
     },
     showTaskList(category){
       this.listCategories = category;
-      this.showNavigation = true;
+      // this.showNavigation = true;
       // console.log(category)
     },
     showTimeList(timeChosen){
       this.timeChosen = timeChosen;
       // console.log(category)
     },
-    getCategoryPercentage(category){
+    createCategoryObject(category){
       let taskArray;
       let completedTaskArray;
-
+      console.log("category")
+      console.log(category)
       if(category=="All"){
         taskArray = this.todos;
         completedTaskArray =  this.completedTodos;
-
       }
       else{
         taskArray = this.todos.filter(task => task.category == category)
         completedTaskArray =  this.completedTodos.filter(task => task.category == category)
       }
+      // console.log(this.todos, this.completedTodos)
       let totalPoints = 0;
       let completedPoints = 0;
+      let taskId
 
       taskArray.forEach(element => {
         // console.log(element.points);
         totalPoints = totalPoints + element.points;
+        taskId = element.taskID
       });
       
       completedTaskArray.forEach(element => {
@@ -149,40 +175,22 @@ export default {
         'category': category,
         'totalPoints': totalPoints,
         'completedPoints': completedPoints,
-        'completedPercentage' : completedPercentage
+        'completedPercentage' : completedPercentage,
+        'taskId': taskId
 
       }
       // console.log(categoryObject)
       return categoryObject
     },
-    getList(categoryToShow, timeList){
-      // console.log(this.timeChosen)
-      if(categoryToShow=="All"){
-        if(timeList=='All'){
-          return this.todos
-        }
-        else{
-          return this.todos.filter(task => task.pickedTime == timeList)
 
-        }
-      }
-      else{
-        if(timeList=='All'){
-          return this.todos.filter(task => task.category == categoryToShow)
-        }
-        else{
-          return this.todos.filter(task => task.category == categoryToShow).filter(task => task.pickedTime == timeList)
-
-        }
-      }
-      
-    }
   }
 };
 </script>
 <style lang="stylus" scoped>
 .right-sidebar
   max-width: 200px
+  border-right: 1px solid black
+  height: calc(100vh - 50px)
 .main-content
   max-width: 1070px
   margin: 0 auto

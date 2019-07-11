@@ -7,8 +7,9 @@
       <md-tab md-label="Home" to="/home"></md-tab> 
       <md-tab md-label="Left To Do" to="/about"></md-tab> 
       <md-tab md-label="Settings" to="/settings"></md-tab>
-      <md-tab md-label="Login" to="/login"></md-tab> 
+      <md-tab md-label="Login" to="/login"></md-tab>
       <md-tab md-label="Sign Up" to="/sign-up"></md-tab>
+
     </md-tabs>
     <router-view />
     <md-app>
