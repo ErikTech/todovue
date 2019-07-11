@@ -6,7 +6,7 @@
     <div class="category-data-component viewport">
           <md-list>
             <!-- <span > -->
-        <md-list-item  v-for="(category, index) in categoryData" :key="index"  v-show="category.category != 'All'" @click="showCategoryTask(category.category)"  :class="{'active' : category.category == selectedCategory}">
+        <md-list-item  v-for="(category, index) in taskCategoryData" :key="index"  v-show="category.category != 'All'" @click="showCategoryTask(category.category)"  :class="{'active' : category.category == selectedCategory}">
           <CategoryChart :chartData="category"/></md-list-item>
   <!-- </span> -->
   </md-list>
@@ -18,6 +18,7 @@
 import { GChart } from 'vue-google-charts';
 import CategoryChart from './charts/categoryChart.vue'
 import MainChart from './charts/mainChart.vue'
+import { mapGetters, mapState } from 'vuex'
 
 
 
@@ -40,36 +41,25 @@ export default {
     // console.log("categoryData");
     // console.log(this.categoryData);
   },
+  computed: {
+      ...mapGetters([
+      // 'todos',
+      // 'completedTodos',
+      'taskCategoryData',
+      // 'categories'
+      // ...
+    ]),
+  },
    data() {
     return {
       selectedCategory: 'Work'
-      // taskCategoryData: []
-      // Array will be automatically processed with visualization.arrayToDataTable function
-    
- 
-      // mainChartData: [
-      //     ['Task', 'Hours per Day'],
-      //     ['Incomplete', 22],
-      //     ['Work',     11],
-      //     ['Finances',      2],
-      //     ['Home',  2],
-      //     ['Fitness', 2],
-      //     ['Family',    7],
-      //   ],
-      // mainOptions: {
-      //   chart: {
-      //     // title: 'Point Allocation this week',
-      //     // subtitle: 'Sales, Expenses, and Profit: 2014-2017',
-      //     pieHole: 0.4,
-      //   },
-      // },
     }
   },
 
   methods: {
     showCategoryTask(category){
       this.selectedCategory = category;
-      console.log("show category clicked: " + this.selectedCategory)
+      // console.log("show category clicked: " + this.selectedCategory)
       this.$emit('showCategoryTasks', this.selectedCategory)
     },
     

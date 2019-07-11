@@ -64,7 +64,7 @@ export default new Vuex.Store({
       state.addTaskModalVisible = true;
     },
     EDIT_TODO_STATUS(state, payload){
-      console.log(payload)
+      // console.log(payload)
       for( var i = 0; i < state.todos.length; i++){ 
         if ( state.todos[i] === payload) {
           let task = db.collection('users').doc(state.userID).collection('tasks').doc(payload.taskId)
@@ -125,6 +125,24 @@ export default new Vuex.Store({
       state.taskCategoryData = payload;
 
     },
+    SAVE_TASK(state, payload){
+      for( var i = 0; i < state.todos.length; i++){ 
+        if ( state.todos[i] === payload) {
+          let task = db.collection('users').doc(state.userID).collection('tasks').doc(payload.taskId)
+          return task.update({
+            ...payload
+        })
+        .then(function() {
+            console.log("Document successfully updated!");
+        })
+        .catch(function(error) {
+            // The document probably doesn't exist.
+            console.error("Error updating document: ", error);
+        });
+        
+        }
+     }
+    },
     GET_USER_TODOS(state, payload) {
       state.todos = payload;
       // console.log(state.todos);
@@ -166,6 +184,9 @@ export default new Vuex.Store({
     },
     saveCategoryData({ commit }, payload) {
       commit("SAVE_CATEGORY_DATA", payload);
+    },
+    saveTask({ commit }, payload) {
+      commit("SAVE_TASK", payload);
     },
     getTodoList({ commit }, payload) {
       commit("GET_USER_TODOS", payload);

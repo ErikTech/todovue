@@ -1,7 +1,7 @@
 <template>
   <div class="md-layout">
   <div class="md-layout-item md-size-30 right-sidebar">
-        <ListContainer :category="listCategories" :timeChosen="timeChosen"/>
+        <ListContainer :category="listCategories" :timeChosen="timeChosen" v-on:refresh="getAllData"/>
 
   </div>
   <div class="md-layout-item md-size-70 main-content">
@@ -16,7 +16,7 @@
     <!-- <img alt="Vue logo" src="../assets/logo.png"> -->
     <!-- <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/> -->
     <!-- <div v-for="(category, index) in taskCategoryData" :key="index" >{{category.category}} : {{category.completedPercentage}}%</div> -->
-    <DataContainer v-on:showCategoryTasks="showTaskList" :categoryData="taskCategoryData"/>
+    <DataContainer v-on:showCategoryTasks="showTaskList"/>
   
 
 
@@ -84,6 +84,7 @@ export default {
       (state, getters) => getters.todos,
       (newValue, oldValue) => {
         if (newValue !== oldValue) {
+          console.log("CJAMGE")
           this.getAllData()
         }
       },
@@ -121,7 +122,7 @@ export default {
       })
     },
     getAllData(){
-      console.log("getting all data")
+      console.log("getting all data RUN")
        let allCategoryData = [];
       //  console.log(this.categories)
        allCategoryData.push(this.createCategoryObject('All'));
