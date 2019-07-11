@@ -4,23 +4,25 @@
         <md-toolbar class="md-transparent" md-elevation="1">
             <span class="md-title" v-if="category">{{category}} Tasks</span>
             <br />
-            <span>  {{todos}}
-                    <input type="checkbox" v-model="showCompleted" />show completed
+            <span>  
+                    <input type="checkbox" v-model="showCompleted"  />show completed
                   </span>
             <!-- {{arrayList}} -->
         </md-toolbar>
         <md-list class="md-double-line">
-            <md-list-item v-for="(todo, index) in todoList" class="list-item-component" :class="{'completed': todo.completed}" :key="index" @click="editTask(todo)" v-show="((todo.completed || !todo.completed) && showCompleted) || (!showCompleted && (!todo.completed)) ">
+            <md-list-item v-for="(todo, index) in todoList" class="list-item-component" :class="{'completed': todo.completed}" :key="index"  v-show="((todo.completed || !todo.completed) && showCompleted) || (!showCompleted && (!todo.completed)) ">
                 <div class="md-list-item-text">
+                    <div><input type="checkbox" v-model="todo.completed" v-bind:value="todo.completed" v-on:change="editStatus(todo)"></div>
                     <h3>{{todo.task}}</h3>
                     <div v-if="todo.completed">Completed!</div>
                     <div v-else>Incomplete</div>
                     {{todo.taskId}}
-    
+
                     <div>
                         {{todo.points }} Points -
                         <span>category: {{todo.category}}</span>
                     </div>
+                    <div @click="editTask(todo)">EDIT HERE</div>
                     <!-- <div class="editTask" @click="editTask">edit</div> -->
                 </div>
             </md-list-item>
@@ -83,6 +85,9 @@ export default {
     ]),
     todoList(){
       return this.getList(this.category, this.timeChosen)
+    },
+    markCompleted(index) {
+      return this.$store.state.todos[index].completed
     }
     
     },
@@ -134,6 +139,9 @@ export default {
             this.showModal = true
             this.edittingTodo = todo
             // console.log("list item clicked");
+        },
+        editStatus(todo){
+          this.$store.dispatch('editStatus', todo);
         },
         closeEditTask() {
             this.showModal = false
