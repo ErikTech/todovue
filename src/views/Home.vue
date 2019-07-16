@@ -5,7 +5,7 @@
 
   </div>
   <div class="md-layout-item md-size-70 main-content">
-  <md-button class="md-primary md-raised" @click="logout">Logout</md-button>
+  <!-- <md-button class="md-primary md-raised" @click="logout">Logout</md-button> -->
   <article v-for="(location, idx) in locations" :key="idx">
     <!-- <img :src="location.image"> -->
     <!-- <h1 class="md-display-1">Welcome {{location.email}}</h1> -->
@@ -102,7 +102,7 @@ export default {
       // categories: [
       //   'All',
       // ],
-      totalPercentage: 0,
+      // totalPercentage: 0,
 
        
     }
@@ -116,11 +116,11 @@ export default {
     // taskCategoryData(){
     //   return this.$store.getters.taskCategoryData;
     // },
-    logout: function() {
-      firebase.auth().signOut().then(() => {
-        this.$router.replace('login')
-      })
-    },
+    // logout: function() {
+    //   firebase.auth().signOut().then(() => {
+    //     this.$router.replace('login')
+    //   })
+    // },
     getAllData(){
       console.log("getting all data RUN")
        let allCategoryData = [];
@@ -162,13 +162,15 @@ export default {
       let taskId
 
       taskArray.forEach(element => {
-        // console.log(element.points);
-        totalPoints = totalPoints + element.points;
-        taskId = element.taskID
+        // console.log("pts: " + element.points);
+        console.log(parseInt(totalPoints, 10) + parseInt(element.points, 10))
+        totalPoints = parseInt(totalPoints, 10) + parseInt(element.points, 10);
+        taskId = element.taskId
       });
       
       completedTaskArray.forEach(element => {
-        completedPoints = completedPoints + element.points;
+       console.log( completedPoints + element.points);
+        completedPoints = parseInt(completedPoints, 10) + parseInt(element.points, 10);
       });
       // console.log(totalPoints, completedTaskArray)
       let completedPercentage = (completedPoints/totalPoints).toFixed(2)*100;

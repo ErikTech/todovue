@@ -1,7 +1,8 @@
 <template>
-<div>
-        <h2>{{chartData.category}} - {{chartData.completedPercentage}}%</h2>
-   
+<div v-show="ready">
+        <h2>{{chartData.category}}</h2>
+        <span>{{chartData.completedPoints}}/{{chartData.totalPoints}} - {{chartData.completedPercentage}}%</span>
+   {{chartColor}}
      <GChart
     :settings="{packages: ['corechart']}"    
     :data="filteredData"
@@ -22,6 +23,7 @@ import {
 export default {
   props: [
     'chartData',
+    'chartColor',
   ],
   components: {
     GChart
@@ -35,10 +37,22 @@ export default {
         ['Other', leftovers],
       ]
       return theData
+    },
+    localColor(){
+      return this.chartColor
     }
+  },
+  mounted(){
+    // if(this.chartColor != null){
+    //   console.log("COLOR: " + this.chartColor)
+    // }
+          this.ready = true
+
   },
   data() {
     return {
+      // localColor: this.chartColor,
+      ready:  false,
       chartOptions: {
         chart: {
           // title: 'Company Performance',
@@ -49,10 +63,7 @@ export default {
           height: 150,
           legend: 'none',
           backgroundColor: 'transparent',
-          colors: ['#42b883', '#282828'],
-
-
-
+          colors: [this.chartColor, '#282828'],
         },
       },
     }

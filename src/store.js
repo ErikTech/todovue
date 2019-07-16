@@ -37,7 +37,8 @@ export default new Vuex.Store({
     totalPoints: 0,
     categories: [],
     todos: [],
-    newTodo: ""
+    newTodo: "",
+    loggedIn: false
   },
   mutations: {
     SET_USER(state, payload){
@@ -166,6 +167,9 @@ export default new Vuex.Store({
     CLEAR_TODO(state) {
       state.newTodo = {};
       state.addTaskModalVisible = false;
+    },
+    SET_AUTH(state, payload){
+      state.loggedIn = payload;
     }
   },
   actions: {
@@ -173,6 +177,9 @@ export default new Vuex.Store({
     //   // return the promise returned by `bindFirestoreRef`
     //   return bindFirestoreRef('todos', db.collection('users').doc(state.userID).collection('tasks'))
     // }),
+    setAuth({ commit }, payload) {
+      commit("SET_AUTH", payload);
+    },
     getTodo({ commit }, todo) {
       commit("GET_TODO", todo);
     },

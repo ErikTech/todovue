@@ -14,8 +14,8 @@
             </md-field>
             <!-- <input type="number" v-model="newTaskPoints" placeholder="3"/> Points -->
         </div>
-        <md-field>
-            <md-select v-show="dropdownDisabled" v-model="newTaskCategory" @change="customCatInput" :disabled="dropdownDisabled">
+        <md-field v-show="!enteringCustomInput">
+            <md-select v-model="chooseTaskCategory">
                 <md-option v-for="(category, index) in categories" :value="category" :key="index">{{category}}</md-option>
                 <!-- <md-option value="Home">Home</md-option>
               <md-option value="Fitness">Fitness</md-option>
@@ -24,10 +24,14 @@
               <md-option value="Code">Code</md-option> -->
             </md-select>
         </md-field>
-        <md-field>
+
+        <md-field v-show="enteringCustomInput">
             <label>Add Custom Category</label>
             <md-input v-model="newCategory" placeholder="Code"></md-input>
         </md-field>
+        <span v-show="!enteringCustomInput" class="sublink" @click="customCatInput">Add New</span>
+        <span v-show="enteringCustomInput" class="sublink" @click="customCatInput">Choose existing category</span>
+
         <div>
             <md-radio type="radio" v-model="pickedTime" value="Today"> Today</md-radio>
         </div>
@@ -53,10 +57,11 @@ export default {
         return {
             newTask: '',
             newTaskPoints: 2,
-            newTaskCategory: 'Work',
+            chooseTaskCategory: 'Work',
             pickedTime: 'today',
             newCategory: '',
-            dropdownDisabled: false
+            dropdownDisabled: false,
+            enteringCustomInput: false
         }
     },
     computed: {
@@ -73,7 +78,7 @@ export default {
         clearTask() {
             this.newTask = '';
             this.newTaskPoints = 2;
-            this.newTaskCategory = 'Work';
+            this.chooseTaskCategory = 'Work';
             this.newCategory = '';
             this.todayTask = false;
             this.thisWeekTask = false;
@@ -82,11 +87,8 @@ export default {
             this.dropdownDisabled = false;
         },
         customCatInput() {
-            if (this.newCategory == '' || !this.newCategory || this.newCategory === null) {
-                this.dropdownDisabled = false;
-            } else {
-                this.dropdownDisabled = true;
-            }
+           this.enteringCustomInput = !this.enteringCustomInput
+          
         },
         confirmTask() {
 
@@ -94,7 +96,7 @@ export default {
                 // status: "not started",
                 task: this.newTask,
                 points: this.newTaskPoints,
-                category: this.dropdownDisabled ? this.newTaskCategory : this.newCategory,
+                category: !this.enteringCustomInput ? this.chooseTaskCategory : this.newCategory,
                 pickedTime: this.pickedTime
             }
             this.$store.dispatch('getTodo', newTaskObj);
@@ -113,6 +115,10 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="stylus">
+
+.sublink
+  text-decoration: underline
+  cursor: pointer
 
 #addTaskModal
   position: fixed;

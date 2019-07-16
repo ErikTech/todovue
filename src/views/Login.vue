@@ -38,6 +38,8 @@
                 this.data.push(collection.data())  
                 this.$store.dispatch('getTodoList', this.data);
                 this.$store.dispatch('setUserId', userUid)
+                this.$store.dispatch('setAuth', true);
+
 
             })
         }).catch(console.log);

@@ -61,13 +61,18 @@ firebase.auth().onAuthStateChanged((user) => {
               // console.log(collection.data());
               data.push(collection.data())  
               this.$store.dispatch('getTodoList', data);
-              this.$store.dispatch('setUserId', userUid)
+              this.$store.dispatch('setUserId', userUid);
+              this.$store.dispatch('setAuth', true);
 
           })
       }) 
+
+
         }
         else{
           this.$router.replace('login');
+          this.$store.dispatch('setAuth', false);
+
 
         }
       },
