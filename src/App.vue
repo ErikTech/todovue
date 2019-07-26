@@ -8,7 +8,7 @@
                 <!-- <md-tab md-label="Left To Do" to="/about"></md-tab> -->
                 <!-- <md-tab md-label="Settings" to="/settings"></md-tab> -->
                 <!-- <md-tab v-if="!loggedIn" md-label="Login" to="/login"></md-tab> -->
-                <md-tab v-if="loggedIn" md-label="Logout" to="/login"  @click="logout"></md-tab>
+                <md-tab v-if="loggedIn" md-label="Logout" to="/login"  @click.prevent.stop="logout"></md-tab>
                 <md-tab md-label="Sign Up" to="/sign-up"></md-tab>
     
             </md-tabs>

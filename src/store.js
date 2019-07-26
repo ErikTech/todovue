@@ -2,31 +2,11 @@
 
 import Vue from "vue";
 import Vuex from "vuex";
-// import { vuexfireMutations, firestoreAction } from 'vuexfire'
 import { db } from './main'
-// import firebase from 'firebase/app'
 import 'firebase/firestore'
-// import createPersistedState from 'vuex-persistedstate'
-
-// import * as Cookies from 'js-cookie'
-
-
-
 Vue.use(Vuex);
 
-// var db = firebase.initializeApp({
-//   databaseURL: 'https://vuefiredemo.firebaseio.com'
-// }).database()
-
-
-
 export default new Vuex.Store({
-  // plugins: [
-  //   createPersistedState({
-  //     getState: (key) => Cookies.getJSON(key),
-  //     setState: (key, state) => Cookies.set(key, state, { expires: 3, secure: true })
-  //   })
-  // ],
   state: {
     user: null,
     userID: null,
@@ -38,7 +18,9 @@ export default new Vuex.Store({
     categories: [],
     todos: [],
     newTodo: "",
-    loggedIn: false
+    loggedIn: false,
+    // chartColors: [],
+    cats: []
   },
   mutations: {
     SET_USER(state, payload){
@@ -85,41 +67,20 @@ export default new Vuex.Store({
     },  
     CONFIRM_TODO(state) {
       let task = db.collection('users').doc(state.userID).collection('tasks').doc()
-
-      // db.collection('users').doc(state.userID).collection('tasks').doc()
-      // .add({...state.newTodo})
       task.set({...state.newTodo, completed: false, taskId: task.id  })
-
-      
       state.todos.push({
         ...state.newTodo,
         completed: false,
         taskId: task.id
       });
-
-      // firestoreAction(({ state }) => {
-
-      //     .then(() => {
-      //       console.log('user updated!')
-      //     }).catch(function(error) {
-      //       console.error("Error adding document: ", error);
-      //   });
-      // })
-
     },
     DELETE_TODO(state, payload) {
-      // console.log(payload)
-      // state.todos.filter(todo => {
-      //   return todo.taskId !== payload.taskId;
-      // })
+
       for( var i = 0; i < state.todos.length; i++){ 
         if ( state.todos[i] === payload) {
           state.todos.splice(i, 1); 
         }
      }
-      // state.todos.splice(payload, 1)
-      // Vue.set(state.todos, payload)
-      // console.log(state.todos)
     },
     
     SAVE_CATEGORY_DATA(state, payload) {
@@ -133,36 +94,48 @@ export default new Vuex.Store({
           return task.update({
             ...payload
         })
-        .then(function() {
-            console.log("Document successfully updated!");
-        })
-        .catch(function(error) {
-            // The document probably doesn't exist.
-            console.error("Error updating document: ", error);
-        });
+        // .then(function() {
+        //     console.log("Document successfully updated!");
+        // })
+        // .catch(function(error) {
+        //     // The document probably doesn't exist.
+        //     console.error("Error updating document: ", error);
+        // });
         
         }
      }
     },
+    ADD_CATEGORY(state, payload) {
+      db.collection('users').doc(state.userID).collection('categories').add({
+        ...payload
+      })
+    // .then(function(docRef) {
+    //   console.log("Document written with ID: ", docRef.id);
+    // })
+    // .catch(function(error) {
+    //     // The document probably doesn't exist.
+    //     console.error("Error updating document: ", error);
+    // });
+    },
+    DELETE_CATEGORY(state, payload) {
+      // db.collection('users').doc(state.userID).collection('categories').doc()
+      console.log(payload)
+    // .then(function(docRef) {
+    //   console.log("Document written with ID: ", docRef.id);
+    // })
+    // .catch(function(error) {
+    //     // The document probably doesn't exist.
+    //     console.error("Error updating document: ", error);
+    // });
+    },
     GET_USER_TODOS(state, payload) {
       state.todos = payload;
-      // console.log(state.todos);
-      // console.log("VUEX" + state.taskCategoryData);
     },
-
-    // ...vuexfireMutations,
-    // EDIT_TODO(state, todo) {
-    //   var todos = state.todos;
-    //   todos.splice(todos.indexOf(todo), 1);
-    //   state.todos = todos;
-    //   state.newTodo = todo.body;
-    // },
-    // REMOVE_TODO(state, todo) {
-    //   var todos = state.todos;
-    //   todos.splice(todos.indexOf(todo), 1);
-    // },
-    // COMPLETE_TODO(state, todo) {
-    //   todo.completed = !todo.completed;
+    GET_USER_CATEGORIES(state, payload) {
+      state.cats = payload;
+    },
+    // SAVE_GENERATED_COLORS(state, payload){
+    //   state.chartColors = payload;
     // },
     CLEAR_TODO(state) {
       state.newTodo = {};
@@ -173,10 +146,6 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    // bindTodos: firestoreAction((state, { bindFirestoreRef }) => {
-    //   // return the promise returned by `bindFirestoreRef`
-    //   return bindFirestoreRef('todos', db.collection('users').doc(state.userID).collection('tasks'))
-    // }),
     setAuth({ commit }, payload) {
       commit("SET_AUTH", payload);
     },
@@ -198,39 +167,33 @@ export default new Vuex.Store({
     getTodoList({ commit }, payload) {
       commit("GET_USER_TODOS", payload);
     },
+    getCategories({ commit }, payload) {
+      commit("GET_USER_CATEGORIES", payload);
+    },
     editStatus({commit}, payload){
       commit("EDIT_TODO_STATUS", payload);
 
     },
-    // fetchTodoItems({commit, state}){
-    //   const todoItems = []
-    //   .collection('users').doc(state.userID).collection('tasks').onSnapshot(snapshot => {
-    //       snapshot.forEach(doc => {
-    //         let item = doc.data()
-    //         item.id = doc.id;
-    //         todoItems.push(item)
-    //       })
-    //       commit('SET_TODO_LIST', todoItems)
-    //     })
-    //     .catch(err => console.log(err))
+    // saveColors({commit}, payload){
+    //     commit("SAVE_GENERATED_COLORS", payload);
     // },
+    addNewCategory({ commit }, payload) {
+      commit("ADD_CATEGORY", payload);
+    },
+    deleteCategory({ commit }, payload) {
+      commit("DELETE_CATEGORY", payload);
+    },
     setUser({ commit }, payload) {
       commit("SET_USER", payload);
     },
     setUserId({ commit }, payload) {
       commit("SET_USER_ID", payload);
     },
-    // editTodo({ commit }, todo) {
-    //   commit("EDIT_TODO", todo);
-    // },
     deleteTodo({ commit, state }, payload) {
       db.collection('users').doc(state.userID).collection('tasks').doc(payload.taskId).delete().then(() =>{
         commit("DELETE_TODO", payload);
       })
     },
-    // completeTodo({ commit }, todo) {
-    //   commit("COMPLETE_TODO", todo);
-    // },
     clearTodo({ commit }) {
       commit("CLEAR_TODO");
     }
@@ -239,15 +202,17 @@ export default new Vuex.Store({
     user: state => state.user,
     status: state => state.status,
     error: state => state.error,
-
-
-
+    cats: state => state.cats,
     newTodo: state => state.newTodo,
     addTaskModalVisible: state => state.addTaskModalVisible,
     todos: state =>
       state.todos.filter(todo => {
         return todo;
       }),
+      // cats: state =>
+      // state.cats.filter(cat => {
+      //   return cat;
+      // }),
     completedTodos: state => state.todos.filter(todo => todo.completed == true),
     taskCategoryData: state => state.taskCategoryData,
     categories: (state) => {

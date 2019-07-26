@@ -1,57 +1,38 @@
 <template>
     <div id="ListContainer">
-        <md-button @click="addTask" class="md-primary md-raised">Create new Task</md-button>
         <h2 v-if="category">{{category}} Tasks</h2>
         <div class="toggle-completed-checkbox">
             <md-checkbox v-model="showCompleted">Show Completed</md-checkbox>
         </div>
         <!-- {{arrayList}} -->
-        <md-list class="md-double-line">
+        <md-list class="md-double-line" v-if="(todoList.length > 0)">
             <md-list-item v-for="(todo, index) in todoList" class="list-item-component" :class="{'completed': todo.completed}" :key="index" v-show="((todo.completed || !todo.completed) && showCompleted) || (!showCompleted && (!todo.completed)) ">
                 <div class="md-list-item-text">
-                    <div><md-checkbox v-model="todo.completed" v-on:change="editStatus(todo)"></md-checkbox></div>
+                    <div>
+                        <md-checkbox v-model="todo.completed" v-on:change="editStatus(todo)"></md-checkbox>
+                    </div>
                     <h3>{{todo.task}}</h3>
                     <div v-if="todo.completed">Completed!</div>
-                    <div v-else>Incomplete</div>
-                    <!-- {{todo.taskId}} -->
-    
+                    <div v-else>Incomplete</div>    
                     <div>
                         {{todo.points }} Points -
                         <span>category: {{todo.category}}</span>
                     </div>
                     <div class="editbtn" @click="editTask(todo)">edit</div>
-                    <!-- <div class="editTask" @click="editTask">edit</div> -->
                 </div>
             </md-list-item>
             <div v-if="showModal" md-elevation="1">
                 <modalComponent>
-                    <!-- <div class="modal-header">
-                                                    <h4 class="modal-title">{{edittingTodo.task}}</h4>
-                                                    <button type="button" @click="closeEditTask" class="md-button md-simple md-just-icon md-round modal-default-button md-theme-default">
-                                                              <div class="md-ripple">
-                                                                <div class="md-button-content">
-                                                                  <i class="md-icon md-icon-font md-theme-default">clear</i>
-                                                                </div>
-                                                              </div>
-                                                            </button>
-                                                </div> -->
                     <div class="modal-body text-center">
                         <edit-task-modal :todo="edittingTodo" v-on:delete="deleteTask(edittingTodo)" v-on:close="closeEditTask" v-on:refresh="refresh"></edit-task-modal>
                     </div>
-                    <!-- <div class="modal-footer">
-                                                    <button type="button" class="danger" @click="deleteTask(edittingTodo)">DELETE TASK</button>
-                                                    <button type="button" class="md-button md-danger md-simple md-theme-default" @click="closeEditTask">
-                                                              <div class="md-ripple">
-                                                                <div class="md-button-content">Save</div>
-                                                              </div>
-                                                            </button>
-                                                </div> -->
                 </modalComponent>
             </div>
         </md-list>
-        <!-- <md-drawer :md-active.sync="showNavigation" md-swipeable> -->
+        <div v-if="!(todoList.length > 0)" class="emptyContainer">Nothing to show</div>
         <add-task-modal></add-task-modal>
-        <!-- </md-drawer> -->
+        <md-button @click="addTask" class="md-primary md-raised">Create new Task</md-button>
+
     </div>
 </template>
 
@@ -184,6 +165,12 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="stylus">
+
+.emptyContainer{
+  padding: 20px;
+  color: #fff;
+  font-size: 16px;
+}
 button
   padding: 10px 15px
   position: relative

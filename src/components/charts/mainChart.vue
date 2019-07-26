@@ -1,19 +1,26 @@
 <template>
-    <div id="mainChart" v-if="ready">
-     
+    <div id="mainChart" >
+    <!-- {{taskCategoryData}} -->
+    <!-- {{mainChartData}} -->
+    <!-- chartColors: {{chartColorsUsed}} -->
+    <!-- {{cats}} -->
+    <!-- allColors: {{allColors}} -->
         <div class="chart-legend">
             <ul>
                 <li v-for="(category, index) in mainChartData" :key="index + '_chartKey'">
                     <div><span class="chartColorBox" :style="{ background: chartColorsUsed[index - 1] }"></span> {{category[0]}} <span class="percentage-done">- {{category[1]}}</span></div>
                 </li>
+                <!-- <li>    {{chartColors[0]}}</li> -->
             </ul>
         </div>
-        <!-- <h1>{{chartColorsUsed()}}</h1> -->
-        <!-- <h2>{{taskCategoryData}}</h2> -->
+    
         <div class="chartContainer" v-if="taskCategoryData.length">
             <h1> {{taskCategoryData[0].category}} Tasks - {{taskCategoryData[0].completedPercentage}}% - {{taskCategoryData[0].completedPoints}}/{{taskCategoryData[0].totalPoints}}</h1>
             <GChart :settings="{packages: ['corechart']}" :data="mainChartData" type="PieChart" :options="mainOptions.chart" :createChart="(el, google) => new google.visualization.PieChart(el)" align="center" style="width: 100%" :resizeDebounce="500" />
         </div>
+        <!-- <div v-for="(color, index) in cats" :key="index">
+            {{color.color}}
+        </div> -->
     </div>
 </template>
 
@@ -25,7 +32,7 @@ import { mapGetters } from 'vuex'
 export default {
     props: [
         // 'chartData',
-        'chartColors'
+        // 'chartColors'
     ],
     components: {
         GChart
@@ -35,78 +42,106 @@ export default {
             // 'todos',
             // 'completedTodos',
             'taskCategoryData',
+            'cats'
             // 'categories'
-            // ...
         ]),
-        chartColorsUsed(){
-          let allColors = JSON.parse(JSON.stringify(this.chartColors))
-          allColors.push('#282828')
-          console.log(allColors)
-          return allColors
+        chartColorsUsed() {
+            let currentTaskData = this.taskCategoryData;
+            let objColors = []
+
+             let catArray = this.cats.map(function(obj) {
+                let objColor          
+
+                 currentTaskData.forEach(element => {
+                     if (element.category == obj.category){
+                        console.log(obj.category, element.category)
+                        console.log(obj.color)
+                        //  console.log("EQUAL")
+                        //  console.log(obj.color)
+                        objColor = obj.color
+                     }
+
+                 });
+                return objColor
+
+
+                //  return obj.color
+                });
+                objColors.push(...catArray)
+                // console.log(objColors)
+                return objColors
         }
     },
     mounted() {
-
         if (this.taskCategoryData.length > 1) {
             this.getAllData()
-            // this.chartColorsUsed = JSON.parse(JSON.stringify(this.chartColors))
-              this.mainOptions.chart.colors = this.chartColorsUsed
-
-            this.ready = true
             
-
-            // this.ready = true
-
-            // this.chartColorsUsed()
-            // this.chartColorsUsed = [...this.chartColors]
-        }
-        else{
-          this.ready = false
+            this.mainOptions.chart.colors = [...this.chartColorsUsed, '#282828']
+            this.ready = true
+        } else {
+            this.ready = false
         }
         this.$store.watch(
-            (state, getters) => state.taskCategoryData,
+            (state, getters) => state.cats,
             (newValue, oldValue) => {
                 if (newValue !== oldValue) {
                     this.getAllData()
-                    this.ready = true
-              this.mainOptions.chart.colors = this.chartColorsUsed
-                    console.log(this.allColors)
+                    // this.ready = true
+                    this.mainOptions.chart.colors = [...this.chartColorsUsed, '#282828']
 
                 }
             },
         );
+           this.$store.watch(
+            (state, getters) => state.taskCategoryData,
+            (newValue, oldValue) => {
+                if (newValue !== oldValue) {
+                    this.getAllData()
+                    this.mainOptions.chart.colors = [...this.chartColorsUsed, '#282828']
 
+                    // this.ready = true
+                }
+            },
+        );
+            this.$store.watch(
+            (state, getters) => state.todos,
+            (newValue, oldValue) => {
+                if (newValue !== oldValue) {
+                    this.getAllData()
+                    this.mainOptions.chart.colors = [...this.chartColorsUsed, '#282828']
 
+                    // this.ready = true
+                }
+            },
+        );
     },
     methods: {
         getAllData() {
-            console.log(this.taskCategoryData)
+            // console.log(this.taskCategoryData)
             this.mainChartData = [
                 ['Task', 'Hours per Day'],
             ];
-            this.taskCategoryData.forEach(element => {
+            this.cats.forEach(element => {
                 // console.log(element)
-                // if(element.category){
                 if (element.category != "All") {
-                    // console.log("element")
-                    // console.log(element)
-
-                    this.mainChartData.push([element.category, element.completedPercentage])
+                    this.taskCategoryData.forEach(cat => {
+                        console.log(cat.category, element.category)
+                        if (cat.category == element.category){
+                            this.mainChartData.push([element.category, cat.completedPoints])
+                            console.log(this.mainChartData)
+                        }
+                    });
                 }
-                // }
             });
-            let leftovers = 100 - this.taskCategoryData[0].completedPercentage;
+            let leftovers = this.taskCategoryData[0].totalPoints - this.taskCategoryData[0].completedPoints;
             this.mainChartData.push(['Incomplete', leftovers])
-            // console.log(this.mainChartData)
-            
         }
     },
     data() {
         return {
             ready: false,
             mainChartData: [],
-            // chartColorsUsed: [],
-            allColors:  [],
+            // allColors: this.chartColorsUsed,
             mainOptions: {
                 chart: {
                     pieHole: 0.4,
@@ -115,8 +150,7 @@ export default {
                     width: 500,
                     height: 400,
                     sliceVisibilityThreshold: 0,
-                    colors: [...this.chartColors, '#282828'],
-                    // colors: this.allColors,
+                    // colors: [...this.chartColorsUsed, '#282828'],
                     legend: { position: 'none' },
                     chartArea: { left: 0, top: 0, width: '100%', height: '75%' }
                 },
@@ -144,9 +178,9 @@ export default {
       text-align: right!important
       &:first-child
         display: none
-      &:last-child
-        .percentage-done
-          display: none
+      // &:last-child
+      //   .percentage-done
+      //     display: none
       .chartColorBox
         height: 15px
         width: 15px
@@ -155,7 +189,7 @@ export default {
 #mainChart
   margin: 0 auto
   width: 100%
-  display: flex
+  display: block
 
   h1
     position: relative

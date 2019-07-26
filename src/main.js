@@ -45,16 +45,14 @@ firebase.auth().onAuthStateChanged((user) => {
       router,
       store,
       el: '#app',
-      // subscriptions: {
-      //   msg: messageObservable
-      // },
       created(){
         if(user){
           // console.log(user)
           const userUid = user.uid; // The UID of the user.
           // console.log(firebase.auth().currentUser)
         // console.log(userUid)
-            firebase.firestore().collection('users').doc(userUid).collection('tasks').get().then(collections => {
+        const db =  firebase.firestore().collection('users').doc(userUid);
+        db.collection('tasks').get().then(collections => {
                             let data = []
 
         collections.forEach(collection => {
@@ -63,17 +61,21 @@ firebase.auth().onAuthStateChanged((user) => {
               this.$store.dispatch('getTodoList', data);
               this.$store.dispatch('setUserId', userUid);
               this.$store.dispatch('setAuth', true);
-
           })
       }) 
-
-
+       db.collection('categories').get().then(collections => {
+        let cats = []
+        
+        collections.forEach(collection => {
+        // console.log(collection.data());
+          cats.push(collection.data())  
+          this.$store.dispatch('getCategories', cats);
+          })
+        }) 
         }
         else{
           this.$router.replace('login');
           this.$store.dispatch('setAuth', false);
-
-
         }
       },
       render: h => h(App)

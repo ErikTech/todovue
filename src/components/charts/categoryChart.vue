@@ -1,74 +1,83 @@
 <template>
-<div v-show="ready">
+    <div v-show="ready">
+        <!-- {{chartColor.color}} -->
         <h2>{{chartData.category}}</h2>
         <span>{{chartData.completedPoints}}/{{chartData.totalPoints}} - {{chartData.completedPercentage}}%</span>
-   {{chartColor}}
-     <GChart
-    :settings="{packages: ['corechart']}"    
-    :data="filteredData"
-    type="PieChart"
-    :options="chartOptions.chart"
-    :createChart="(el, google) => new google.visualization.PieChart(el)"
-    align="center"
-    
-  />
-  </div>
+        <GChart :settings="{packages: ['corechart']}" :data="filteredData" type="PieChart" :options="chartOptions.chart" :createChart="(el, google) => new google.visualization.PieChart(el)" align="center" />
+    </div>
 </template>
 
 <script lang="js">
 import {
-  GChart
+    GChart
 } from 'vue-google-charts';
 
 export default {
-  props: [
-    'chartData',
-    'chartColor',
-  ],
-  components: {
-    GChart
-  },
-  computed: {
-    filteredData() {
-      let leftovers = 100 - this.chartData.completedPercentage;
-      let theData = [
-        ['Task', 'Percentage completed'],
-        [this.chartData.category, this.chartData.completedPercentage],
-        ['Other', leftovers],
-      ]
-      return theData
+    props: [
+        'chartData',
+        'chartColor',
+    ],
+    components: {
+        GChart
     },
-    localColor(){
-      return this.chartColor
-    }
-  },
-  mounted(){
-    // if(this.chartColor != null){
-    //   console.log("COLOR: " + this.chartColor)
-    // }
-          this.ready = true
-
-  },
-  data() {
-    return {
-      // localColor: this.chartColor,
-      ready:  false,
-      chartOptions: {
-        chart: {
-          // title: 'Company Performance',
-          // subtitle: 'Sales, Expenses, and Profit: 2014-2017',
-          pieHole: 0.5,
-          // is3D: true,
-          width: 150,
-          height: 150,
-          legend: 'none',
-          backgroundColor: 'transparent',
-          colors: [this.chartColor, '#282828'],
+    computed: {
+        filteredData() {
+            let leftovers = 100 - this.chartData.completedPercentage;
+            let theData = [
+                ['Task', 'Percentage completed'],
+                [this.chartData.category, this.chartData.completedPercentage],
+                ['Other', leftovers],
+            ]
+            return theData
         },
-      },
-    }
+    },
+    mounted() {
+        this.setColors(this.$store.getters.cats)
+        this.ready = true
+        this.$store.watch(
+            (state, getters) => state.cats,
+            (newValue, oldValue) => {
+                if (newValue !== oldValue) {
+                 this.setColors(newValue)
+                }
+            },
+        );
 
-  }
+    },
+    data() {
+        return {
+            ready: false,
+            chartOptions: {
+                chart: {
+                    pieHole: 0.5,
+                    // is3D: true,
+                    width: 150,
+                    height: 150,
+                    legend: 'none',
+                    backgroundColor: 'transparent',
+                    colors: ['#fff', '#282828'],
+                },
+            },
+        }
+
+    },
+    methods: {
+        setColors(categoryArray){
+             let tempColor = '#fef'
+                    // this.getAllData()
+                    // console.log(categoryArray)
+                    categoryArray.forEach(element => {
+                        // console.log(element.category, this.chartData.category)
+                        if(element.category == this.chartData.category){
+                            tempColor = element.color
+                            return
+                        }
+                    });
+                  
+                    this.ready = true
+                    this.chartOptions.chart.colors = [tempColor, '#282828']
+        }
+    }
 }
 </script>
 

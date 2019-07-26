@@ -1,14 +1,16 @@
 <template>
     <div id="DataContainer" v-if="ready">
+      <!-- {{cats}} -->
         <md-list-item @click="showCategoryTask('All')" :class="{'active' : selectedCategory == 'All'}">
-            <MainChart :chartColors="chartColors" />
+            <MainChart/>
         </md-list-item>
-        
-        <div class="category-data-component viewport">
+        <!-- <h1>{{cats}}</h1> -->
+        <div class="category-data-component viewport" v-if="taskCategoryData.length > 1">
             <md-list>
                 <!-- <span > -->
-                <md-list-item v-for="(category, index) in taskCategoryData" :key="index" v-show="category.category != 'All'" @click="showCategoryTask(category.category)" :class="{'active' : category.category == selectedCategory}">
-                    <CategoryChart :chartData="category" :chartColor="chartColors[index-1]" />
+                <md-list-item v-for="(category, index) in taskCategoryData" :key="index" v-show="(category.category != 'All')" @click="showCategoryTask(category.category)" :class="{'active' : category.category == selectedCategory}">
+                    <CategoryChart :chartData="category" :chartColor="cats[index - 1]" />
+                    <!-- {{cats[index - 1].color}} -->
                 </md-list-item>
                 <!-- </span> -->
             </md-list>
@@ -25,7 +27,6 @@ import { mapGetters, mapState } from 'vuex'
 
 
 export default {
-    // @Prop() private msg!: string;
     components: {
         GChart,
         MainChart,
@@ -34,121 +35,27 @@ export default {
     props: [
         'categoryData'
     ],
-    created: function() {
-            // let letters = "0123456789ABCDEF";
-            // let hexArray = []
-            // // console.log("RUNS");
-            // // html color code starts with # 
-
-            // // generating 6 times as HTML color code consist 
-            // // of 6 letter or digits
-            // for (let i = 0; i < this.taskCategoryData.length - 1; i++) {
-            //     let color = '#';
-            //     for (let i = 0; i < 6; i++) {
-            //         color += letters[(Math.floor(Math.random() * 16))];
-            //     }
-            //     hexArray.push(color)
-            // }
-            // this.chartColors = hexArray
-
-    },
     mounted(){
-      if(this.taskCategoryData.length)
-        this.chartColorsGenerate(this.taskCategoryData.length)
-      // console.log(this.chartColors)
-      // this.ready = true
-        //  let letters = "0123456789ABCDEF";
-        //   let hexArray = []
-        //   console.log("RUNS");
-        //   // html color code starts with # 
-
-        //   // generating 6 times as HTML color code consist 
-        //   // of 6 letter or digits
-        //   for (let i = 0; i < this.taskCategoryData.length - 1; i++) {
-        //       let color = '#';
-        //       for (let i = 0; i < 6; i++) {
-        //           color += letters[(Math.floor(Math.random() * 16))];
-        //       }
-        //       hexArray.push(color)
-        //   }
-        //   this.chartColors = hexArray
-
-      // this.chartColors = this.colorArray
-        // this.chartColorsGenerate()
-        // this.chartColorsGenerate()
-        this.$store.watch(
-            (state, getters) => getters.taskCategoryData,
-            (newValue, oldValue) => {
-                if (newValue !== oldValue) {
-                    this.chartColorsGenerate(this.taskCategoryData.length);
-                }
-            },
-        );
-        // this.chartColorsUsed()
-        // console.log("categoryData");
-        // console.log(this.categoryData);
+      this.ready = true
     },
     computed: {
         ...mapGetters([
-            // 'todos',
-            // 'completedTodos',
             'taskCategoryData',
-            // 'categories'
+            // 'categories',
+            // 'chartColors',
+            'cats'
             // ...
         ]),
-        // colorArray() {
-        //     let letters = "0123456789ABCDEF";
-        //     let hexArray = []
-        //     console.log("RUNS");
-        //     // html color code starts with # 
 
-        //     // generating 6 times as HTML color code consist 
-        //     // of 6 letter or digits
-        //     for (let i = 0; i < this.taskCategoryData.length - 1; i++) {
-        //         let color = '#';
-        //         for (let i = 0; i < 6; i++) {
-        //             color += letters[(Math.floor(Math.random() * 16))];
-        //         }
-        //         hexArray.push(color)
-        //     }
-        //     return hexArray
-        // }
-        // chartColors(){
-        //   return this.chartColorsGenerate
-        // }
     },
     data() {
-      
         return {
           ready: false,
-            selectedCategory: 'Work',
-            chartColors: '',
-            // chartColors:  []
+          selectedCategory: 'Work',
         }
     },
 
     methods: {
-        chartColorsGenerate(catLength) {
-            let letters = "0123456789ABCDEF";
-            let hexArray = []
-            // console.log("RUNS");
-            // html color code starts with # 
-
-            // generating 6 times as HTML color code consist 
-            // of 6 letter or digits
-            // console.log(this.taskCategoryData.length)
-            for (let i = 0; i < catLength - 1; i++) {
-                let color = '#';
-                for (let i = 0; i < 6; i++) {
-                    color += letters[(Math.floor(Math.random() * 16))];
-                }
-                hexArray.push(color)
-            }
-            this.chartColors = hexArray
-            // console.log(this.chartColors)
-            this.ready = true
-            // return hexArray
-        },
         showCategoryTask(category) {
             this.selectedCategory = category;
             // console.log("show category clicked: " + this.selectedCategory)
